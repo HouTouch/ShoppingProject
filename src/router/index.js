@@ -1,16 +1,19 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import layout from '@/views/layout/index.vue'
-import login from '@/views/login/index.vue'
-import search from '@/views/search/index.vue'
-import searchlist from '@/views/search/searchlist.vue'
-import prodetail from '@/views/prodetail/index.vue'
-import pay from '@/views/pay/index.vue'
-import myorder from '@/views/myorder/index.vue'
-import Home from '@/views/layout/home.vue'
-import category from '@/views/layout/category.vue'
-import user from '@/views/layout/user.vue'
-import cart from '@/views/layout/cart.vue'
+
+const layout = () => import('@/views/layout/index.vue')
+const login = () => import('@/views/login/index.vue')
+const search = () => import('@/views/search/index.vue')
+const searchlist = () => import('@/views/search/searchlist.vue')
+const prodetail = () => import('@/views/prodetail/index.vue')
+const pay = () => import('@/views/pay/index.vue')
+const myorder = () => import('@/views/myorder/index.vue')
+const Home = () => import('@/views/layout/home.vue')
+const category = () => import('@/views/layout/category.vue')
+const user = () => import('@/views/layout/user.vue')
+const cart = () => import('@/views/layout/cart.vue')
+const address = () => import('@/views/pay/adrsManage.vue')
+const addAddress = () => import('@/views/pay/addAddress.vue')
 
 // import store from '@/store'
 Vue.use(VueRouter)
@@ -33,7 +36,9 @@ const router = new VueRouter({
     { path: '/searchlist', component: searchlist },
     { path: '/prodetail/:id', component: prodetail },
     { path: '/pay', component: pay },
-    { path: '/myorder', component: myorder }
+    { path: '/myorder', component: myorder },
+    { path: '/address', component: address },
+    { path: '/addAddress', component: addAddress }
   ]
 })
 

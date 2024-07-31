@@ -1,10 +1,11 @@
 <template>
   <div class="cart">
-    <van-nav-bar title="购物车" fixed />
+    <div v-if="isLogin && cartList.length >0" class="cart-box">
+ <van-nav-bar title="购物车" fixed />
     <!-- 购物车开头 -->
     <div class="cart-title">
       <span class="all">共<i>{{ carTotal || 0 }}</i>件商品</span>
-      <span class="edit">
+      <span class="edit" @click="isEdit=!isEdit">
         <van-icon name="edit" />
         编辑
       </span>
@@ -40,13 +41,22 @@
           <span>合计：</span>
           <span>¥ <i class="totalPrice">{{ selCount }}</i></span>
         </div>
-        <div v-if="true" :class="{ disabled: selCount === 0 }" class="goPay">
-            结算({{ selCarTotal }})
+        <div v-if="!isEdit" :class="{ disabled: selCount === 0 }" class="goPay" >
+           <div @click="goPay">结算({{ selCarTotal }})</div>
         </div>
-        <div v-else  :class="{ disabled: selCount === 0 }" class="delete">
+        <div v-else @click="delFnc" :class="{ disabled: selCount === 0 }" class="delete">
             删除({{ selCarTotal }})
         </div>
       </div>
+    </div>
+    </div>
+
+    <div class="empty-cart" v-else>
+      <img src="@/assets/empty.png" alt="">
+      <div class="tips">
+        您的购物车是空的, 快去逛逛吧
+      </div>
+      <div class="btn" @click="$router.push('/')">去逛逛</div>
     </div>
   </div>
 </template>
@@ -58,6 +68,11 @@ import CountBox from '@/components/CountBox.vue'
 
 export default {
   name: 'cartIndex',
+  data () {
+    return {
+      isEdit: false
+    }
+  },
   components: {
     CountBox
   },
@@ -67,7 +82,7 @@ export default {
       return this.$store.getters.token
     },
     ...mapState('cart', ['cartList']),
-    ...mapGetters('cart', ['carTotal', 'selCarTotal', 'selCount', 'isAllChecked'])
+    ...mapGetters('cart', ['carTotal', 'selCarTotal', 'selCount', 'isAllChecked', 'selCarList'])
   },
   created () {
     if (this.isLogin) {
@@ -87,6 +102,31 @@ export default {
         goodsId,
         skuId
       })
+    },
+    async delFnc () {
+      if (this.selCount === 0) return
+      await this.$store.dispatch('cart/delSelectFnc')
+      this.isEdit = false
+    },
+    goPay () {
+      if (this.selCount > 0) {
+        this.$router.push({
+          path: '/pay',
+          query: {
+            mode: 'cart',
+            cartIds: this.selCarList.map(item => item.id).join(',')
+          }
+        })
+      }
+    }
+  },
+  watch: {
+    isEdit (val) {
+      if (val) {
+        this.$store.commit('cart/checkdAll', false)
+      } else {
+        this.$store.commit('cart/checkdAll', true)
+      }
     }
   }
 }
@@ -226,6 +266,30 @@ export default {
       }
     }
   }
-
+}
+.empty-cart {
+  padding: 80px 30px;
+  img {
+    width: 140px;
+    height: 92px;
+    display: block;
+    margin: 0 auto;
+  }
+  .tips {
+    text-align: center;
+    color: #666;
+    margin: 30px;
+  }
+  .btn {
+    width: 110px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    background-color: #fa2c20;
+    border-radius: 16px;
+    color: #fff;
+    display: block;
+    margin: 0 auto;
+  }
 }
 </style>

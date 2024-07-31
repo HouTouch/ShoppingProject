@@ -58,6 +58,7 @@ export default {
       })
       this.proList = list.data
     }
+
   }
 
 }
